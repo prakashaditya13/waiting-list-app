@@ -2,7 +2,7 @@ import React from 'react'
 
 const UserRegistrationForm = () => {
   return (
-    <div>
+    <div className="">
         User Registration Form
     </div>
   )
