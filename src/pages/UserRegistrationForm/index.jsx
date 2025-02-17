@@ -1,10 +1,6 @@
 import React from "react";
-import Input from "../../components/Input";
-import Button from "../../components/Button";
-import LinkButton from "../../components/LinkButton";
 import WaitingIcon from "../../assets/icons/LeavingQueue.png";
-import Divider from "../../components/Divider";
-import ToastMessage from "../../components/ToastMessage";
+import {Button, Divider, Input, LinkButton, ToastMessage} from "../../components";
 
 const UserRegistrationForm = () => {
   return (

@@ -1,8 +1,7 @@
 import './App.css'
 import { WaitlistProvider } from './context/waitlist'
 import {  Route, Routes, BrowserRouter } from 'react-router-dom'
-import UserRegistrationForm from './pages/UserRegistrationForm'
-import WaitlistStatus from './pages/WaitlistStatus'
+import { UserRegistrationForm, WaitlistStatus } from "./pages"
 
 function App() {
   return (
