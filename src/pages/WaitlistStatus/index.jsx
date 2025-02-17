@@ -1,23 +1,65 @@
-import React from "react";
-import LinkButton from "../../components/LinkButton";
-import ToastMessage from "../../components/ToastMessage";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { Button, LinkButton, ToastMessage } from "../../components";
 import SychronizeIcon from "../../assets/icons/Synchronize.png";
 import LoaderIcon from "../../assets/icons/Loader.gif";
+import { useWaitlist } from "../../hooks/UserWaitlist";
+import { inviteCodes } from "../../config";
+import { CalculateWaitTime } from "../../utils";
 
 const WaitlistStatus = () => {
+  const { users, CreateUser } = useWaitlist();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const value = queryParams.get("auto");
+  const [isAutomateMsg, setAutomateMsg] = useState(false);
+  const [currentRandomName, setCurrentRandomName] = useState("");
+  const RandomNames = [
+    "Aditya",
+    "Rahul",
+    "Abhishek",
+    "Rajat",
+    "Samir",
+    "Aruna",
+  ];
+
+  useEffect(() => {
+    // This is only runs when auto query param is true
+    if (value === "true") {
+      const automateInterval = setInterval(() => {
+        const RandomName =
+          RandomNames[Math.floor(Math.random() * RandomNames.length)];
+        const generateRandomInviteCode =
+          inviteCodes[Math.floor(Math.random() * inviteCodes.length)];
+        setCurrentRandomName(RandomName)
+        CreateUser(RandomName, generateRandomInviteCode);
+        setAutomateMsg(true);
+        const timer = setTimeout(() => setAutomateMsg(false), 3000);
+        return () => clearTimeout(timer);
+      }, 10000); // Runs every 10 sec and add user to the list
+
+      return () => {
+        clearInterval(automateInterval);
+      };
+    }
+  }, [CreateUser, value]);
+
   return (
     <div className="__waitlistStatus__main__container p-6">
       <div className="__main__header__container flex justify-between items-baseline">
         <h3 className="font-sans text-lg max-sm:text-sm tracking-[1.2px]">
           User Waiting Status
         </h3>
-        <div className="__toastMsg__container max-sm:hidden">
-          <ToastMessage
-            text="User X is added to the list"
-            toastStyleClass="border border-dashed border-[#fff] inline-block px-8 py-1 rounded-[15px]"
-            textStyleClass="text-[#fff] font-sans text-xs font-bold"
-          />
-        </div>
+        {isAutomateMsg && (
+          <div className="__toastMsg__container max-sm:hidden">
+            <ToastMessage
+              text={`User ${currentRandomName} is added to the list`}
+              toastStyleClass="border border-dashed border-[#fff] inline-block px-8 py-1 rounded-[15px]"
+              textStyleClass="text-[#fff] font-sans text-xs font-bold"
+            />
+          </div>
+        )}
+
         <LinkButton
           textLink="Wait list registration"
           slug="/"
@@ -32,39 +74,68 @@ const WaitlistStatus = () => {
           <p>User will be added every 10 sec</p>
         </p>
         <p className="flex items-center">
-          <span>Total Users :- </span><span className="text-[#FF00BF]"> 20 </span>
+          <span>Total Users :- </span>
+          <span className="text-[#FF00BF]"> {users?.length} </span>
         </p>
       </div>
 
       <div className="__table__container">
-        <div className="__loader__container py-10 flex justify-center">
-          <div className="loader flex flex-col justify-center items-center">
+        {users?.length === 0 ? (
+          <div className="__loader__container py-10 flex justify-center">
+            <div className="loader flex flex-col justify-center items-center">
               <img src={LoaderIcon} width={50} height={50} />
-              <h4 className="font-sans text-sm max-sm:text-xs">Waiting for the user...</h4>
+              <h4 className="font-sans text-sm max-sm:text-xs">
+                Waiting for the user...
+              </h4>
+            </div>
           </div>
-        </div>
-        {/* <div className="__tableRow__container my-4 bg-[#F3F3F5] text-[#000] flex justify-around rounded-[7px] py-2 font-sans [&>div>p]:flex [&>div>p]:gap-2 [&>div>p>span]:text-[#352384]">
-          <div>
-            <p>
-              <h4>User: </h4>
-              <span>Aditya</span>
-            </p>
-            <p>
-              <h4>Status: </h4>
-              <span className="!text-[red]">Invalid</span>
-            </p>
-          </div>
-          <div>
-            <p>
-              <h4>Position: </h4>
-              <span>6th</span>
-            </p>
-            <p>
-              <h4>Est. Wait Time: </h4>
-              <span>5 Days</span>
-            </p>
-          </div>
-        </div> */}
+        ) : (
+          users?.map((item, index) => {
+            return (
+              <div
+                key={users?.id}
+                className="__tableRow__container my-4 bg-[#F3F3F5] text-[#000] px-4 max-sm:px-1 flex justify-evenly rounded-[7px] py-2 font-sans [&>div>p]:flex [&>div>p]:gap-2 [&>div>p>span]:text-[#352384]"
+              >
+                <div>
+                  <p>
+                    <h4>User: </h4>
+                    <span>{item?.name}</span>
+                  </p>
+                  <p>
+                    <h4>Status: </h4>
+                    <span
+                      className={`${
+                        item?.inviteCode === null ||
+                        item?.inviteCode === "" ||
+                        !inviteCodes?.includes(item?.inviteCode)
+                          ? "!text-[red]"
+                          : "!text-[green]"
+                      }`}
+                    >
+                      {item?.inviteCode === null ||
+                      item?.inviteCode === "" ||
+                      !inviteCodes?.includes(item?.inviteCode)
+                        ? "Invalid Code"
+                        : `Valid( ${item?.inviteCode} )`}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    <h4>Position: </h4>
+                    <span>{item?.position}th</span>
+                  </p>
+                  <p>
+                    <h4>Est. Wait Time: </h4>
+                    <span>
+                      {CalculateWaitTime(index + 1, item?.isPriority)}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

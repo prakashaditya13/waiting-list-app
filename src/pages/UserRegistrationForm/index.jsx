@@ -1,13 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import WaitingIcon from "../../assets/icons/LeavingQueue.png";
-import {Button, Divider, Input, LinkButton, ToastMessage} from "../../components";
+import {
+  Button,
+  Divider,
+  Input,
+  LinkButton,
+  ToastMessage,
+} from "../../components";
+import { useWaitlist } from "../../hooks/UserWaitlist";
+import { IsValidInviteCode } from "../../utils";
 
 const UserRegistrationForm = () => {
+  const { CreateUser } = useWaitlist();
+  const [name, setName] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
+  const [checkMsg, setCheckMsg] = useState(false);
+  const [laoder, setLoader] = useState(false);
+
+  const handleCreateUserSubmit = (e) => {
+    console.log(name, inviteCode);
+    setLoader(true);
+    e.preventDefault();
+    const IsCheckValidCode = IsValidInviteCode(inviteCode);
+    CreateUser(name, IsCheckValidCode ? inviteCode : null);
+    IsCheckValidCode ? setCheckMsg(true) : setCheckMsg(false);
+    setName("");
+    setInviteCode("");
+  };
+
   return (
     <div className="__main__container">
       <div className="__formBox__container flex flex-col justify-center items-center h-screen">
         <div className="__inputForm__section px-20 max-sm:px-16  rounded-[10px] bg-[#F3F3F5] pt-6 pb-16">
-          <form className="flex flex-col">
+          <form onSubmit={handleCreateUserSubmit} className="flex flex-col">
             <h2 className="text-center uppercase font-sans text-[#FF00BF] text-lg max-sm:text-sm tracking-[1.2px] max-sm:tracking-[0.5px] font-bold py-6">
               Wait list Registration
             </h2>
@@ -15,17 +40,17 @@ const UserRegistrationForm = () => {
               <Input
                 type="text"
                 placeholder="Name"
-                inputVal={""}
-                onChangeHandler={() => {}}
+                inputVal={name}
+                onChangeHandler={(e) => setName(e.target.value)}
                 IsRequired={true}
                 styleClass="bg-transparent text-[#333347] outline-none px-3 max-sm:px-1.5 max-sm:py-1 max-sm:placeholder:text-xs border rounded-[6px] py-2 border-[#333347]/45 placeholder:text-[#333347]/45 placeholder:font-medium placeholder:font-sans"
               />
               <Input
                 type="text"
                 placeholder="Invite Code (optional)"
-                inputVal={""}
-                onChangeHandler={() => {}}
-                IsRequired={true}
+                inputVal={inviteCode}
+                onChangeHandler={(e) => setInviteCode(e.target.value)}
+                IsRequired={false}
                 styleClass="bg-transparent text-[#333347] outline-none px-3 max-sm:px-1.5 max-sm:py-1 max-sm:placeholder:text-xs border rounded-[6px] py-2 border-[#333347]/45 placeholder:text-[#333347]/45 placeholder:font-medium placeholder:font-sans"
               />
               <div className="__buttonGroup__container flex justify-center pt-6">
@@ -46,7 +71,7 @@ const UserRegistrationForm = () => {
             />
           </form>
 
-          <div className="__waitingStatus__buttonGroup__container flex justify-center">
+          <div className="__waitingStatus__buttonGroup__container flex flex-col justify-center items-center gap-2">
             <LinkButton
               textLink="Waiting List Status"
               slug="/waitlist"
@@ -54,16 +79,47 @@ const UserRegistrationForm = () => {
               IsIcon={true}
               IconComponent={WaitingIcon}
             />
+            <LinkButton
+              textLink="Automate Wait List"
+              slug="/waitlist?auto=true"
+              styleClass="bg-[#352384] flex justify-center gap-3 w-fit font-sans text-sm p-2 rounded-[8px] px-6"
+              IsIcon={false}
+              IconComponent={WaitingIcon}
+            />
           </div>
 
           {/* Error and Success Section */}
-          {/* <div className="flex justify-center pt-16">
-            <ToastMessage
-              text="Invalid Invite Code"
-              toastStyleClass="border border-dashed border-[red] inline-block px-8 py-1 rounded-[15px]"
-              textStyleClass="text-[red] font-sans text-xs font-bold"
-            />
-          </div> */}
+
+          {laoder ? (
+            checkMsg ? (
+              <div className="flex justify-center pt-16">
+                <ToastMessage
+                  text="You have been added to the List!"
+                  toastStyleClass="border border-dashed border-[green] inline-block px-8 py-1 rounded-[15px]"
+                  textStyleClass="text-[green] font-sans text-xs font-bold"
+                />
+              </div>
+            ) : (
+              <>
+                <div className="flex justify-center pt-16">
+                  <ToastMessage
+                    text="Invalid Invite Code!"
+                    toastStyleClass="border border-dashed border-[red] inline-block px-8 py-1 rounded-[15px]"
+                    textStyleClass="text-[red] font-sans text-xs font-bold"
+                  />
+                </div>
+                <div className="flex justify-center py-2">
+                  <ToastMessage
+                    text="User is added to general waitlist!"
+                    toastStyleClass="border border-dashed border-[#333347] inline-block px-8 py-1 rounded-[15px]"
+                    textStyleClass="text-[#333347] font-sans text-xs font-bold"
+                  />
+                </div>
+              </>
+            )
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>
