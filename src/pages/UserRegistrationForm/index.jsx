@@ -57,7 +57,7 @@ const UserRegistrationForm = () => {
                 <Button
                   text="Add User to Wait List"
                   type="submit"
-                  StyleClass="border p-2 rounded-[8px] w-fit bg-[#352384] text-sm font-sans px-8 hover:cursor-pointer"
+                  StyleClass="border text-[#fff] p-2 rounded-[8px] w-fit bg-[#352384] text-sm font-sans px-8 hover:cursor-pointer"
                   IsIcon={false}
                   onClickHandler={() => {}}
                 />
@@ -75,14 +75,14 @@ const UserRegistrationForm = () => {
             <LinkButton
               textLink="Waiting List Status"
               slug="/waitlist"
-              styleClass="bg-[#352384] flex justify-center gap-3 w-fit font-sans text-sm p-2 rounded-[8px] px-6"
+              styleClass="bg-[#352384] text-[#fff] flex justify-center gap-3 w-fit font-sans text-sm p-2 rounded-[8px] px-6"
               IsIcon={true}
               IconComponent={WaitingIcon}
             />
             <LinkButton
               textLink="Automate Wait List"
               slug="/waitlist?auto=true"
-              styleClass="bg-[#352384] flex justify-center gap-3 w-fit font-sans text-sm p-2 rounded-[8px] px-6"
+              styleClass="bg-[#352384] text-[#fff] flex justify-center gap-3 w-fit font-sans text-sm p-2 rounded-[8px] px-6"
               IsIcon={false}
               IconComponent={WaitingIcon}
             />

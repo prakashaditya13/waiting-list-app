@@ -15,7 +15,7 @@ const WaitlistStatus = () => {
   const [isAutomateMsg, setAutomateMsg] = useState(false);
   const [currentRandomMsg, setCurrentRandomMsg] = useState({
     name: "",
-    listType: ""
+    listType: "",
   });
   const RandomNames = [
     "Aditya",
@@ -34,12 +34,15 @@ const WaitlistStatus = () => {
           RandomNames[Math.floor(Math.random() * RandomNames.length)];
         const generateRandomInviteCode =
           inviteCodes[Math.floor(Math.random() * inviteCodes.length)];
-          setCurrentRandomMsg(() => {
-            return {
-              name: RandomName,
-              listType: generateRandomInviteCode !== null ? "Priority list" : "General wait list"
-            }
-        })
+        setCurrentRandomMsg(() => {
+          return {
+            name: RandomName,
+            listType:
+              generateRandomInviteCode !== null
+                ? "Priority list"
+                : "General wait list",
+          };
+        });
         CreateUser(RandomName, generateRandomInviteCode);
         setAutomateMsg(true);
         const timer = setTimeout(() => setAutomateMsg(false), 3000);
@@ -53,7 +56,7 @@ const WaitlistStatus = () => {
   }, [CreateUser, value]);
 
   return (
-    <div className="__waitlistStatus__main__container p-6">
+    <div className="__waitlistStatus__main__container p-6 text-[#fff]">
       <div className="__main__header__container flex justify-between items-baseline">
         <h3 className="font-sans text-lg max-sm:text-sm tracking-[1.2px]">
           User Waiting Status
@@ -88,62 +91,58 @@ const WaitlistStatus = () => {
       </div>
 
       <div className="__table__container">
-        {users?.length === 0 ? (
-          <div className="__loader__container py-10 flex justify-center">
-            <div className="loader flex flex-col justify-center items-center">
-              <img src={LoaderIcon} width={50} height={50} />
-              <h4 className="font-sans text-sm max-sm:text-xs">
-                Waiting for the user...
-              </h4>
-            </div>
-          </div>
-        ) : (
-          users?.map((item, index) => {
-            return (
-              <div
-                key={users?.id}
-                className="__tableRow__container my-4 bg-[#F3F3F5] text-[#000] px-4 max-sm:px-1 flex justify-evenly rounded-[7px] py-2 font-sans [&>div>p]:flex [&>div>p]:gap-2 [&>div>p>span]:text-[#352384]"
-              >
-                <div>
-                  <p>
-                    <h4>User: </h4>
-                    <span>{item?.name}</span>
-                  </p>
-                  <p>
-                    <h4>Status: </h4>
-                    <span
-                      className={`${
-                        item?.inviteCode === null ||
-                        item?.inviteCode === "" ||
-                        !inviteCodes?.includes(item?.inviteCode)
-                          ? "!text-[red]"
-                          : "!text-[green]"
-                      }`}
-                    >
-                      {item?.inviteCode === null ||
+        {users?.map((item, index) => {
+          return (
+            <div
+              key={users?.id}
+              className="__tableRow__container my-4 bg-[#F3F3F5] text-[#000] px-4 max-sm:px-1 flex justify-evenly rounded-[7px] py-2 font-sans [&>div>p]:flex [&>div>p]:gap-2 [&>div>p>span]:text-[#352384]"
+            >
+              <div>
+                <p>
+                  <h4>User: </h4>
+                  <span>{item?.name}</span>
+                </p>
+                <p>
+                  <h4>Status: </h4>
+                  <span
+                    className={`${
+                      item?.inviteCode === null ||
                       item?.inviteCode === "" ||
                       !inviteCodes?.includes(item?.inviteCode)
-                        ? "Invalid Code"
-                        : `Valid( ${item?.inviteCode} )`}
-                    </span>
-                  </p>
-                </div>
-                <div>
-                  <p>
-                    <h4>Position: </h4>
-                    <span>{item?.position}th</span>
-                  </p>
-                  <p>
-                    <h4>Est. Wait Time: </h4>
-                    <span>
-                      {CalculateWaitTime(index + 1, item?.isPriority)}
-                    </span>
-                  </p>
-                </div>
+                        ? "!text-[red]"
+                        : "!text-[green]"
+                    }`}
+                  >
+                    {item?.inviteCode === null ||
+                    item?.inviteCode === "" ||
+                    !inviteCodes?.includes(item?.inviteCode)
+                      ? "Invalid Code"
+                      : `Valid( ${item?.inviteCode} )`}
+                  </span>
+                </p>
               </div>
-            );
-          })
-        )}
+              <div>
+                <p>
+                  <h4>Position: </h4>
+                  <span>{item?.position}th</span>
+                </p>
+                <p>
+                  <h4>Est. Wait Time: </h4>
+                  <span>{CalculateWaitTime(index + 1, item?.isPriority)}</span>
+                </p>
+              </div>
+            </div>
+          );
+        })}
+
+        <div className="__loader__container py-7 flex justify-center">
+          <div className="loader flex flex-col justify-center items-center">
+            <img src={LoaderIcon} width={50} height={50} />
+            <h4 className="font-sans text-sm max-sm:text-xs">
+              Waiting for the user...
+            </h4>
+          </div>
+        </div>
       </div>
     </div>
   );
