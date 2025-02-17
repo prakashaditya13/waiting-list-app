@@ -12,6 +12,8 @@ import { CalculateWaitTime } from "../../utils";
  * It handles user registration manually and automatically using a query param.
  */
 
+const ITEMS_PER_PAGE = 5; // Change this for different page sizes
+
 const WaitlistStatus = () => {
   const { users, CreateUser } = useWaitlist();
   const location = useLocation();
@@ -36,6 +38,12 @@ const WaitlistStatus = () => {
     "Samir",
     "Aruna",
   ];
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const selectedUsers = users.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   useEffect(() => {
     // This is only runs when auto query param is true
@@ -105,7 +113,7 @@ const WaitlistStatus = () => {
       </div>
 
       <div className="__table__container">
-        {users?.map((item, index) => {
+        {selectedUsers?.map((item, index) => {
           return (
             <div
               key={users?.id}
@@ -142,14 +150,19 @@ const WaitlistStatus = () => {
                 </p>
                 <p>
                   <h4>Est. Wait Time: </h4>
-                  <span>{CalculateWaitTime(index + 1, item?.isPriority)}</span>
+                  <span>
+                    {CalculateWaitTime(
+                      startIndex + index + 1,
+                      item?.isPriority
+                    )}
+                  </span>
                 </p>
               </div>
             </div>
           );
         })}
 
-        <div className="__loader__container py-7 flex justify-center">
+        <div className="__loader__container py-4 flex justify-center">
           <div className="loader flex flex-col justify-center items-center">
             <img src={LoaderIcon} width={50} height={50} />
             <h4 className="font-sans text-sm max-sm:text-xs">
@@ -157,6 +170,28 @@ const WaitlistStatus = () => {
             </h4>
           </div>
         </div>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="pagination">
+        <button
+          className="hover:cursor-pointer"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+        >
+          ⬅️ Previous
+        </button>
+        <span>
+          {" "}
+          ( {currentPage} of {totalPages} ){" "}
+        </span>
+        <button
+          className="hover:cursor-pointer"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+        >
+          Next ➡️
+        </button>
       </div>
     </div>
   );
