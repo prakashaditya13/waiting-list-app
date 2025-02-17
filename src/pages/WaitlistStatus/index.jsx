@@ -13,7 +13,10 @@ const WaitlistStatus = () => {
   const queryParams = new URLSearchParams(location.search);
   const value = queryParams.get("auto");
   const [isAutomateMsg, setAutomateMsg] = useState(false);
-  const [currentRandomName, setCurrentRandomName] = useState("");
+  const [currentRandomMsg, setCurrentRandomMsg] = useState({
+    name: "",
+    listType: ""
+  });
   const RandomNames = [
     "Aditya",
     "Rahul",
@@ -31,7 +34,12 @@ const WaitlistStatus = () => {
           RandomNames[Math.floor(Math.random() * RandomNames.length)];
         const generateRandomInviteCode =
           inviteCodes[Math.floor(Math.random() * inviteCodes.length)];
-        setCurrentRandomName(RandomName)
+          setCurrentRandomMsg(() => {
+            return {
+              name: RandomName,
+              listType: generateRandomInviteCode !== null ? "Priority list" : "General wait list"
+            }
+        })
         CreateUser(RandomName, generateRandomInviteCode);
         setAutomateMsg(true);
         const timer = setTimeout(() => setAutomateMsg(false), 3000);
@@ -53,7 +61,7 @@ const WaitlistStatus = () => {
         {isAutomateMsg && (
           <div className="__toastMsg__container max-sm:hidden">
             <ToastMessage
-              text={`User ${currentRandomName} is added to the list`}
+              text={`User ${currentRandomMsg?.name} is added to the ${currentRandomMsg?.listType}`}
               toastStyleClass="border border-dashed border-[#fff] inline-block px-8 py-1 rounded-[15px]"
               textStyleClass="text-[#fff] font-sans text-xs font-bold"
             />
