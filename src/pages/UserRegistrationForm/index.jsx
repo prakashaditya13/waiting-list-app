@@ -10,12 +10,35 @@ import {
 import { useWaitlist } from "../../hooks/UserWaitlist";
 import { IsValidInviteCode } from "../../utils";
 
+/**
+ * UserRegistrationForm component handles user input for adding a user to the waitlist.
+ * 
+ * - Accepts user name and an optional invite code.
+ * - Validates the invite code and adds the user to the waitlist accordingly.
+ * - Displays success or error messages based on invite code validity.
+ *
+ * @component
+ * @returns {JSX.Element} A registration form with user input fields, submit button, and status messages.
+ */
+
 const UserRegistrationForm = () => {
   const { CreateUser } = useWaitlist();
   const [name, setName] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   const [checkMsg, setCheckMsg] = useState(false);
   const [laoder, setLoader] = useState(false);
+
+
+  /**
+   * Handles the form submission event.
+   * 
+   * - Prevents default form behavior.
+   * - Validates the invite code using `IsValidInviteCode`.
+   * - Calls `CreateUser` from `useWaitlist` with the provided name and invite code.
+   * - Displays success message if code is valid, else shows an error and adds user to general waitlist.
+   *
+   * @param {Event} e - Form submit event object.
+   */
 
   const handleCreateUserSubmit = (e) => {
     console.log(name, inviteCode);

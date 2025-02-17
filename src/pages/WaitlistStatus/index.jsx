@@ -7,16 +7,27 @@ import { useWaitlist } from "../../hooks/UserWaitlist";
 import { inviteCodes } from "../../config";
 import { CalculateWaitTime } from "../../utils";
 
+/**
+ * WaitlistStatus Component displays and manages the waitlist status.
+ * It handles user registration manually and automatically using a query param.
+ */
+
 const WaitlistStatus = () => {
   const { users, CreateUser } = useWaitlist();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const value = queryParams.get("auto");
+
+  /** State to manage the visibility of automated user addition message */
   const [isAutomateMsg, setAutomateMsg] = useState(false);
+
+  /** State to store the current random user and list type */
   const [currentRandomMsg, setCurrentRandomMsg] = useState({
     name: "",
     listType: "",
   });
+
+  /** Predefined list of random user names */
   const RandomNames = [
     "Aditya",
     "Rahul",
@@ -28,6 +39,9 @@ const WaitlistStatus = () => {
 
   useEffect(() => {
     // This is only runs when auto query param is true
+    /**
+     * Automates user addition every 10 seconds if 'auto' query param is true.
+     */
     if (value === "true") {
       const automateInterval = setInterval(() => {
         const RandomName =
