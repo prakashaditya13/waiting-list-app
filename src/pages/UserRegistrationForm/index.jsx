@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import WaitingIcon from "../../assets/icons/LeavingQueue.png";
 import {
   Button,
@@ -12,7 +12,7 @@ import { IsValidInviteCode } from "../../utils";
 
 /**
  * UserRegistrationForm component handles user input for adding a user to the waitlist.
- * 
+ *
  * - Accepts user name and an optional invite code.
  * - Validates the invite code and adds the user to the waitlist accordingly.
  * - Displays success or error messages based on invite code validity.
@@ -21,16 +21,45 @@ import { IsValidInviteCode } from "../../utils";
  * @returns {JSX.Element} A registration form with user input fields, submit button, and status messages.
  */
 
+const renderSuccessMessage = () => (
+  <div className="flex justify-center pt-16">
+    <ToastMessage
+      text="You have been added to the List!"
+      toastStyleClass="border border-dashed border-[green] inline-block px-8 py-1 rounded-[15px]"
+      textStyleClass="text-[green] font-sans text-xs font-bold"
+    />
+  </div>
+);
+
+const renderErrorMessage = () => (
+  <>
+    <div className="flex justify-center pt-16">
+      <ToastMessage
+        text="Invalid Invite Code!"
+        toastStyleClass="border border-dashed border-[red] inline-block px-8 py-1 rounded-[15px]"
+        textStyleClass="text-[red] font-sans text-xs font-bold"
+      />
+    </div>
+    <div className="flex justify-center py-2">
+      <ToastMessage
+        text="User is added to general waitlist!"
+        toastStyleClass="border border-dashed border-[#333347] inline-block px-8 py-1 rounded-[15px]"
+        textStyleClass="text-[#333347] font-sans text-xs font-bold"
+      />
+    </div>
+  </>
+);
+
 const UserRegistrationForm = () => {
   const { CreateUser } = useWaitlist();
   const [name, setName] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   const [checkMsg, setCheckMsg] = useState(false);
-  const [laoder, setLoader] = useState(false);
+  const [loader, setLoader] = useState(false);
 
   /**
    * Handles the form submission event.
-   * 
+   *
    * - Prevents default form behavior.
    * - Validates the invite code using `IsValidInviteCode`.
    * - Calls `CreateUser` from `useWaitlist` with the provided name and invite code.
@@ -39,16 +68,18 @@ const UserRegistrationForm = () => {
    * @param {Event} e - Form submit event object.
    */
 
-  const handleCreateUserSubmit = (e) => {
-    console.log(name, inviteCode);
-    setLoader(true);
-    e.preventDefault();
-    const IsCheckValidCode = IsValidInviteCode(inviteCode);
-    CreateUser(name, IsCheckValidCode ? inviteCode : null);
-    IsCheckValidCode ? setCheckMsg(true) : setCheckMsg(false);
-    setName("");
-    setInviteCode("");
-  };
+  const handleCreateUserSubmit = useCallback(
+    (e) => {
+      setLoader(true);
+      e.preventDefault();
+      const IsCheckValidCode = IsValidInviteCode(inviteCode);
+      CreateUser(name, IsCheckValidCode ? inviteCode : null);
+      IsCheckValidCode ? setCheckMsg(true) : setCheckMsg(false);
+      setName("");
+      setInviteCode("");
+    },
+    [name, inviteCode, CreateUser]
+  );
 
   return (
     <div className="__main__container">
@@ -112,32 +143,11 @@ const UserRegistrationForm = () => {
 
           {/* Error and Success Section */}
 
-          {laoder ? (
+          {loader ? (
             checkMsg ? (
-              <div className="flex justify-center pt-16">
-                <ToastMessage
-                  text="You have been added to the List!"
-                  toastStyleClass="border border-dashed border-[green] inline-block px-8 py-1 rounded-[15px]"
-                  textStyleClass="text-[green] font-sans text-xs font-bold"
-                />
-              </div>
+              renderSuccessMessage()
             ) : (
-              <>
-                <div className="flex justify-center pt-16">
-                  <ToastMessage
-                    text="Invalid Invite Code!"
-                    toastStyleClass="border border-dashed border-[red] inline-block px-8 py-1 rounded-[15px]"
-                    textStyleClass="text-[red] font-sans text-xs font-bold"
-                  />
-                </div>
-                <div className="flex justify-center py-2">
-                  <ToastMessage
-                    text="User is added to general waitlist!"
-                    toastStyleClass="border border-dashed border-[#333347] inline-block px-8 py-1 rounded-[15px]"
-                    textStyleClass="text-[#333347] font-sans text-xs font-bold"
-                  />
-                </div>
-              </>
+              renderErrorMessage()
             )
           ) : (
             <></>
