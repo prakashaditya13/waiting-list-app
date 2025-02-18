@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { Button, LinkButton, ToastMessage } from "../../components";
 import SychronizeIcon from "../../assets/icons/Synchronize.png";
-import LoaderIcon from "../../assets/icons/Loader.gif";
+import LoaderIcon from "../../assets/icons/loader.gif";
 import { useWaitlist } from "../../hooks/UserWaitlist";
 import { inviteCodes } from "../../config";
 import { CalculateWaitTime } from "../../utils";
