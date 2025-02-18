@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { Button, LinkButton, ToastMessage } from "../../components";
 import SychronizeIcon from "../../assets/icons/Synchronize.png";
@@ -15,6 +15,7 @@ import { CalculateWaitTime } from "../../utils";
 const ITEMS_PER_PAGE = 5; // Change this for different page sizes
 
 const WaitlistStatus = () => {
+  const intervalRef = useRef();
   const { users, CreateUser } = useWaitlist();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -41,7 +42,10 @@ const WaitlistStatus = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
+  const totalPages = useMemo(
+    () => Math.ceil(users.length / ITEMS_PER_PAGE),
+    [users.length]
+  );
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const selectedUsers = users.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
@@ -51,7 +55,7 @@ const WaitlistStatus = () => {
      * Automates user addition every 10 seconds if 'auto' query param is true.
      */
     if (value === "true") {
-      const automateInterval = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         const RandomName =
           RandomNames[Math.floor(Math.random() * RandomNames.length)];
         const generateRandomInviteCode =
@@ -72,7 +76,7 @@ const WaitlistStatus = () => {
       }, 10000); // Runs every 10 sec and add user to the list
 
       return () => {
-        clearInterval(automateInterval);
+        clearInterval(intervalRef.current);
       };
     }
   }, [CreateUser, value]);
@@ -116,12 +120,12 @@ const WaitlistStatus = () => {
         {selectedUsers?.map((item, index) => {
           return (
             <div
-              key={users?.id}
+              key={item?.id}
               className="__tableRow__container my-4 bg-[#F3F3F5] text-[#000] px-4 max-sm:px-1 flex justify-evenly rounded-[7px] py-2 font-sans [&>div>p]:flex [&>div>p]:gap-2 [&>div>p>span]:text-[#352384]"
             >
               <div>
                 <p>
-                  <h4>User: </h4>
+                  <strong>User: </strong>
                   <span>{item?.name}</span>
                 </p>
                 <p>
