@@ -28,7 +28,6 @@ const UserRegistrationForm = () => {
   const [checkMsg, setCheckMsg] = useState(false);
   const [laoder, setLoader] = useState(false);
 
-
   /**
    * Handles the form submission event.
    * 
