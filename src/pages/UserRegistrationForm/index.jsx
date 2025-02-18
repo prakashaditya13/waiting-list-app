@@ -21,17 +21,17 @@ import { IsValidInviteCode } from "../../utils";
  * @returns {JSX.Element} A registration form with user input fields, submit button, and status messages.
  */
 
-const renderSuccessMessage = () => (
-  <div className="flex justify-center pt-16">
+export const renderSuccessMessage = () => {
+  return <div className="flex justify-center pt-16">
     <ToastMessage
       text="You have been added to the List!"
       toastStyleClass="border border-dashed border-[green] inline-block px-8 py-1 rounded-[15px]"
       textStyleClass="text-[green] font-sans text-xs font-bold"
     />
   </div>
-);
+}
 
-const renderErrorMessage = () => (
+export const renderErrorMessage = () => (
   <>
     <div className="flex justify-center pt-16">
       <ToastMessage
